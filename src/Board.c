@@ -4,7 +4,7 @@
 void Board_Init(Board *board)
 {
     board->currScore = 0;
-    //board->currLevel = 0;
+    board->currLevelLineClear = 0;
     board->lineClearAmount = 0;
     board->xTileOnScreen = BOARD_X_TILE_OFFSET;
     board->yTileOnScreen = BOARD_Y_TILE_OFFSET;
@@ -56,41 +56,9 @@ bool IsEmptyLine(Board *board, s16 line)
     return TRUE;
 }
 
-s16 BoardGetFullLineRows(Board *board, s16 lines[4])
+u8 Board_FilledLineCount(Block *block, Board *board)
 {
-    s16 clearLineCounter = 0;
-    s16 y = BOARD_SPACE_HEIGHT - 1;
-    s16 index = 0;
-
-    while (y >= 0)
-    {
-        //当前行没有任何方块空行的情况
-        if (IsEmptyLine(board, y))
-        {
-            y = 0;
-        }
-
-        //当前行全部有方块满行的情况
-        if (IsFilledLine(board, y))
-        {
-            clearLineCounter++;
-
-            //board->data[y][x] = BLOCK_TYPE_EMPTY;
-            lines[index] = y;
-            index++;
-        }
-        else
-        {
-            y--;
-        }
-
-    }
-    return clearLineCounter;
-}
-
-s16 Board_FilledLineCount(Block *block, Board *board)
-{
-    s16 clearLineCounter = 0;
+    u8 clearLineCounter = 0;
     for (s16 y = 0; y < 4; y++)
     {
         if (IsFilledLine(board, block->yTileOnBoard + y))
@@ -107,12 +75,12 @@ s16 Board_FilledLineCount(Block *block, Board *board)
     return clearLineCounter;
 }
 
-s16 Board_ClearLine2(Block *block, Board *board)
+u8 Board_ClearLine(Block *block, Board *board)
 {
-    s16 clearLineCounter = 0;
+    u8 clearLineCounter = 0;
 
 
-    for (s16 y = 3; y >= 0; y--)
+    for (s8 y = 3; y >= 0; y--)
     {
 
         if (IsFilledLine(board, block->yTileOnBoard + y + clearLineCounter))
@@ -128,71 +96,10 @@ s16 Board_ClearLine2(Block *block, Board *board)
     return clearLineCounter;
 }
 
-s16 Board_ClearLine(Board *board)
-{
-    s16 clearLineCounter = 0;
-    s16 y = BOARD_SPACE_HEIGHT - 1;
-
-    while (y >= 0)
-    {
-        //当前行没有任何方块空行的情况
-        if (IsEmptyLine(board, y))
-        {
-            y = 0;
-        }
-
-        //当前行全部有方块满行的情况
-        if (IsFilledLine(board, y))
-        {
-            clearLineCounter++;
-            //使所有行下降
-            for (s16 index = y; index >= 0; index--)
-            {
-                if (index > 0)
-                {
-                    for (s16 x = 2; x < BOARD_SPACE_WIDTH + 2; x++)
-                    {
-                        board->data[index][x] = board->data[index - 1][x];
-                    }
-                }
-                else
-                {
-                    for (s16 x = 2; x < BOARD_SPACE_WIDTH + 2; x++)
-                    {
-                        board->data[index][x] = BLOCK_TYPE_EMPTY;
-                    }
-                }
-            }
-
-        }
-        else
-        {
-            y--;
-        }
-
-    }
-    return clearLineCounter;
-
-}
-
-
 
 void Board_RedrawGameFiled(Board *board)
 {
-    /*
-        u16 tiles[28][40];
-    while (TRUE)
-    {
-        VDP_showFPS(TRUE);
-        for (int y = 0; y < 28; y++) {
-            for (int x = 0; x < 40; x++) {
-                tiles[y][x] = TILE_ATTR_FULL(PAL1, FALSE, FALSE, FALSE, random() % 16);
-            }
-            VDP_setTileMapData(VDP_PLAN_B, tiles[y], y * 64, 40, DMA_QUEUE);
-        }
-        VDP_waitVSync();
-    }
-    */
+
     u16 tiles[BOARD_HEIGHT - 2][BOARD_WIDTH - 4];
 
     for (s16 y = 0; y < BOARD_HEIGHT - 2; y++)
@@ -206,6 +113,4 @@ void Board_RedrawGameFiled(Board *board)
     SYS_disableInts();
     VDP_setTileMapDataRect(PLAN_A, tiles[0], board->xTileOnScreen + 2, board->yTileOnScreen,  BOARD_WIDTH - 4, BOARD_HEIGHT - 2);
     SYS_enableInts();
-
-
 }

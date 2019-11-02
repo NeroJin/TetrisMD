@@ -1,4 +1,4 @@
-IMAGE bg2Image "bg2.png" BEST
+IMAGE bg2Image "bg2.png" FAST
 IMAGE boardImage "board.png" FAST
 IMAGE titleImage "gameTitle.png" FAST
 SPRITE blockSprite "block.png" 4 4 FAST

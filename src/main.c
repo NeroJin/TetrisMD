@@ -3,6 +3,9 @@
 #include "music.h"
 #include "define.h"
 
+u8 autoFallSpeedLevel[AUTO_FALL_SPEED_LEVEL_MAX] =   { 53, 48, 42, 35, 27, 10, 14, 9, 5, 4, 3};
+u8 levelClearLineNum[AUTO_FALL_SPEED_LEVEL_MAX] =    { 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20, 20 };
+//u8 levelClearLineNum[AUTO_FALL_SPEED_LEVEL_MAX] =    { 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4 };
 
 static void UpdatePhysic();
 
@@ -313,22 +316,18 @@ void GamePlay()
         intToStr(board1.currScore, str, 1);
         VDP_drawText("SCORE", 5, 16);
         VDP_drawText(str, 5, 17);
-        //VDP_drawText("999999999", 1, 17);
 
         intToStr(board1.lineClearAmount, str, 1);
         VDP_drawText("LINES", 5, 19);
         VDP_drawText(str, 5, 20);
-
-
-        //VDP_drawText("HOLD", 6, 3);
-        //VDP_drawText("NEXT", 22, 3);
 
         SYS_enableInts();
 
         SPR_update();
 
         VDP_waitVSync();
-        VDP_showFPS(0);
+
+        //VDP_showFPS(0);
     }
 
 
@@ -393,7 +392,6 @@ void joyEventOnGameOver(u16 joy, u16 changed, u16 state)
 //手柄控制处理
 void joyEventOnGamePlay(u16 joy, u16 changed, u16 state) //state = pressed , changed = released
 {
-    //const u16 pressed = changed & state;
 
     if (changed & state & BUTTON_START)
     {
@@ -406,15 +404,12 @@ void joyEventOnGamePlay(u16 joy, u16 changed, u16 state) //state = pressed , cha
             block1.visible = FALSE;
             blockGhost1.visible = FALSE;
             VDP_clearPlan(PLAN_A, TRUE);
-            //VDP_drawText("PAUSE", 46, 14);
             ShowPauseSprite(paused);
             SND_pausePlay_XGM();
             SND_startPlayPCM_XGM(SOUND_PAUSE, 10, SOUND_PCM_CH2);
         }
         else
         {
-            //VDP_clearText(18, 12, 5);
-            //SPR_setVisibility(block1.sprite, VISIBLE);
             ShowPauseSprite(paused);
             block1.visible = TRUE;
 
@@ -501,12 +496,6 @@ void joyEventOnGamePlay(u16 joy, u16 changed, u16 state) //state = pressed , cha
 
     }
 }
-
-
-
-
-
-
 
 static void UpdatePhysic()
 {
@@ -663,11 +652,7 @@ static void UpdatePhysic()
             else if (block1.landDelay == 0)
             {
                 block1.landRow = BOARD_SPACE_HEIGHT - (block1.yTileOnBoard + Block_GetHeight(&block1));
-                /*
-                char str[16];
-                intToStr(block1.landRow, str, 1);
-                VDP_drawText(str, 25, 0);
-                */
+
                 board1.currScore += LandScore(&block1, &board1);
                 Block_Landing(&block1, &board1);
                 block1.visible = FALSE;
@@ -691,7 +676,6 @@ static void UpdatePhysic()
 
             }
 
-            //VDP_drawText("LAND", 25, 1);
             break;
 
         case CLEARING:
@@ -714,27 +698,30 @@ static void UpdatePhysic()
             else if (board1.clearLineDelay == 0)
             {
                 lineClearAnimStep = 5;
-                board1.lineClearAmount += Board_ClearLine2(&block1, &board1);
+                u8 lineClearCount = Board_ClearLine(&block1, &board1);
+                board1.currLevelLineClear += lineClearCount;
+                board1.lineClearAmount += lineClearCount;
                 //消行得分
-                if (board1.lineClearAmount == 1)
+                if (lineClearCount == 1)
                 {
                     board1.currScore += 100;
                 }
-                else if (board1.lineClearAmount == 2)
+                else if (lineClearCount == 2)
                 {
                     board1.currScore += 400;
                 }
-                else if (board1.lineClearAmount == 3)
+                else if (lineClearCount == 3)
                 {
                     board1.currScore += 900;
                 }
-                else if (board1.lineClearAmount == 4)
+                else if (lineClearCount == 4)
                 {
                     board1.currScore += 2500;
                 }
 
-                if (board1.lineClearAmount > levelClearLineNum[board1.currLevel])
+                if (board1.currLevelLineClear >= levelClearLineNum[board1.currLevel])
                 {
+                    board1.currLevelLineClear = board1.currLevelLineClear - levelClearLineNum[board1.currLevel];
                     board1.currLevel++;
                     block1.autoFallMaxSpeed = autoFallSpeedLevel[board1.currLevel];
                     if (board1.currLevel > AUTO_FALL_SPEED_LEVEL_MAX)
@@ -840,10 +827,7 @@ static void UpdatePhysic()
     }
 
 
-
 }
-
-
 
 
 void BlockMoveLeft()

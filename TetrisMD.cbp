@@ -3,6 +3,8 @@
 	<FileVersion major="1" minor="6" />
 	<Project>
 		<Option title="TetrisMD" />
+		<Option makefile="D:/SGDK/makefile.gen" />
+		<Option makefile_is_custom="1" />
 		<Option pch_mode="2" />
 		<Option compiler="sega_genesis_compiler" />
 		<Build>
@@ -22,6 +24,18 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="res/gfx.h" />
+		<Unit filename="res/gfx.res" />
+		<Unit filename="res/music.h" />
+		<Unit filename="res/music.res" />
+		<Unit filename="src/Block.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
+		<Unit filename="src/Board.c">
+			<Option compilerVar="CC" />
+			<Option target="&lt;{~None~}&gt;" />
+		</Unit>
 		<Unit filename="src/define.h">
 			<Option target="&lt;{~None~}&gt;" />
 		</Unit>

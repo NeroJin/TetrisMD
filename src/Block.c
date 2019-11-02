@@ -91,20 +91,6 @@ bool Block_CanMove(Block *block, Board *board, s16 xOffset, s16 yOffset)
     return result;
 }
 
-bool Block_CanMoveForTry(s16 rotationData[BLOCK_DATA_Y][BLOCK_DATA_X], Board *board, s16 block_xTileOnBoard, s16 block_yTileOnBoard, s16 xOffset, s16 yOffset)
-{
-    bool result = TRUE;
-    for (u8 y = 0; y < 4; y++)
-    {
-        for (u8 x = 0; x < 4; x++)
-        {
-            if (rotationData[y][x] != BLOCK_TYPE_EMPTY && board->data[block_yTileOnBoard + y + yOffset][block_xTileOnBoard + x + xOffset] != BLOCK_TYPE_EMPTY)
-                result = FALSE;
-        }
-    }
-    return result;
-}
-
 void Block_MoveOnBoard(Block *block, s16 xOnBoardOffset, s16 yOnBoardOffset)
 {
     block->xTileOnBoard += xOnBoardOffset;

@@ -188,6 +188,7 @@ typedef struct
     s16 currScore;
     s16 currLevel;
     s16 lineClearAmount;
+    s16 currLevelLineClear;
     s16 xTileOnScreen;  //游戏棋盘方块移动空间的屏幕x坐标，不包括虚拟墙，以tile为单位。
     s16 yTileOnScreen;  //游戏棋盘方块移动空间的屏幕y坐标，不包括虚拟墙，以tile为单位。
     s16 data[BOARD_HEIGHT][BOARD_WIDTH];       //用于表现游戏棋盘的数组23*14，左右各有2列为虚拟墙，底部也有2行为虚拟墙，游戏棋盘空间为21*10，设置多余的墙用于简化编程。
@@ -249,17 +250,13 @@ typedef struct
     u8 x;
     u8 y;
 } Position;
-//static u8 autoFallSpeedLevel[AUTO_FALL_SPEED_LEVEL_MAX] = { 53, 49, 45, 41, 37, 33, 28, 22, 17, 11, 8, 6, 4, 3, 2, 1};
-static u8 autoFallSpeedLevel[AUTO_FALL_SPEED_LEVEL_MAX] =   { 53, 48, 42, 35, 27, 10, 14,  9,  5,  4,  3};
-static u8 levelClearLineNum[AUTO_FALL_SPEED_LEVEL_MAX] =    { 30, 60, 90, 120, 150,	180, 210, 240, 270,	300, 330, 360 };
+
 
 
 void Board_Init(Board *board);
 void Board_RedrawGameFiled(Board *board);
-s16 BoardGetFullLineRows(Board *board, s16 lines[4]); //返回需要消除的行数，参数返回行数数组。
-s16 Board_FilledLineCount(Block *block, Board *board);
-s16 Board_ClearLine(Board *board);
-s16 Board_ClearLine2(Block *block, Board *board);
+u8 Board_FilledLineCount(Block *block, Board *board);
+u8 Board_ClearLine(Block *block, Board *board);
 bool IsFilledLine(Board *board, s16 line);
 bool IsEmptyLine(Board *board, s16 line);
 
@@ -271,7 +268,6 @@ s16 Block_GetRotatesRightState(s16 rotationState); //返回方块转右的状态。
 u8 Block_GetHeight(Block *block);
 u8 Blcok_GetWidth(Block *block);
 bool Block_CanMove(Block *block, Board *board, s16 xOffset, s16 yOffset);
-bool Block_CanMoveForTry(s16 rotationData[BLOCK_DATA_Y][BLOCK_DATA_X], Board *board, s16 block_xTileOnBoard, s16 block_yTileOnBoard,  s16 xOffset, s16 yOffset);
 void Block_MoveOnBoard(Block *block, s16 xOnBoardOffset, s16 yOnBoardOffset);
 void Block_Reborn(Block *block, Board *board);
 void Block_Landing(Block *block, Board *board);
