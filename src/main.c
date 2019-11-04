@@ -131,6 +131,7 @@ void GameTitle()
     SND_startPlay_XGM(title_xgm);
 
 	s16 frames = 0;
+
 	game.exitCurrScene = FALSE;
 	game.loop = TRUE;
 	while (game.loop)
@@ -155,6 +156,12 @@ void GameTitle()
             game.loop = FALSE;
             game.scene = GAME_OPTION;
         }
+
+        SYS_disableInts();
+        VDP_drawText("Nero Jin @2019",24, 25);
+        VDP_drawText("https://github.com/NeroJin/TetrisMD", 3, 26);
+
+        SYS_enableInts();
 
         frames++;
 
@@ -308,6 +315,10 @@ void GamePlay()
         SYS_disableInts();
 
         char str[32];
+
+        intToStr(game.hiScore, str, 1);
+        VDP_drawText("HI SCORE", 5, 10);
+        VDP_drawText(str, 5, 11);
 
         intToStr(board1.currLevel, str, 1);
         VDP_drawText("LEVEL", 5, 13);
@@ -654,6 +665,8 @@ static void UpdatePhysic()
                 block1.landRow = BOARD_SPACE_HEIGHT - (block1.yTileOnBoard + Block_GetHeight(&block1));
 
                 board1.currScore += LandScore(&block1, &board1);
+                if (game.hiScore < board1.currScore)
+                    game.hiScore = board1.currScore;
                 Block_Landing(&block1, &board1);
                 block1.visible = FALSE;
                 blockGhost1.visible = FALSE;
@@ -718,11 +731,14 @@ static void UpdatePhysic()
                 {
                     board1.currScore += 2500;
                 }
+                if (game.hiScore < board1.currScore)
+                    game.hiScore = board1.currScore;
 
                 if (board1.currLevelLineClear >= levelClearLineNum[board1.currLevel])
                 {
                     board1.currLevelLineClear = board1.currLevelLineClear - levelClearLineNum[board1.currLevel];
-                    board1.currLevel++;
+                    if (board1.currLevel < AUTO_FALL_SPEED_LEVEL_MAX - 1)
+                        board1.currLevel++;
                     block1.autoFallMaxSpeed = autoFallSpeedLevel[board1.currLevel];
                     if (board1.currLevel > AUTO_FALL_SPEED_LEVEL_MAX)
                         board1.currLevel = AUTO_FALL_SPEED_LEVEL_MAX;
@@ -793,10 +809,7 @@ static void UpdatePhysic()
             {
                 //VDP_drawText("GAME OVER", 13, 1);
                 ShowGameOverSprite();
-                if (board1.currScore > game.hiScore)
-                {
-                    game.hiScore = board1.currScore;
-                }
+
 
                 block1.state = EXIT_GAME;
             }

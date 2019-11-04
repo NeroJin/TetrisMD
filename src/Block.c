@@ -22,7 +22,7 @@ void Block_Init(Block *block, Board *board)
     block->rotationState = BLOCK_ROTATION_STATE_0;
     block->speedX = 0;
     block->accelX = 1;
-    block->maxSpeedX = 5;
+    block->maxSpeedX = 6;
     block->autoFallSpeed = 0;
     block->autoFallAccel = 1;
     block->softDropSpeed = 0;
