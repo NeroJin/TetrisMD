@@ -12,3 +12,8 @@ A Homebrew Tetris Game for the Sega Megadrive/Genesis, write with C and using SG
 | C          | Rotate Right(方块右旋转) |
 ## 运行方法：
 用Sega Megadrive/Genesis模拟器（Fusion、PicoDrive、Gens...）加载rom运行。
+## 截图：
+![screenshot 1](https://github.com/NeroJin/TetrisMD/blob/master/screenshot/ss1.png)
+![screenshot 2](https://github.com/NeroJin/TetrisMD/blob/master/screenshot/ss2.png)
+![screenshot 3](https://github.com/NeroJin/TetrisMD/blob/master/screenshot/ss3.png)
+![screenshot 4](https://github.com/NeroJin/TetrisMD/blob/master/screenshot/ss4.png)
